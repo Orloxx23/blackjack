@@ -20,9 +20,6 @@ export default function Match() {
   const [crupierTotal, setCrupierTotal] = React.useState(0);
   const [crupierAceCount, setCrupierAceCount] = React.useState(0);
 
-  const [blackjack, setBlackjack] = React.useState(false);
-  const [lose, setLose] = React.useState(false);
-
   // System
   const [disabled, setDisabled] = React.useState(false);
   const [message, setMessage] = React.useState("");
@@ -74,7 +71,6 @@ export default function Match() {
     setCrupierTotal(_total);
     setCrupierCards(newCards);
 
-    //isBlackjack(_total);
   };
 
   const pedir = () => {
@@ -128,7 +124,6 @@ export default function Match() {
     }
 
     if (total === 21) {
-      setBlackjack(true);
       plantarse(total);
       return;
     }
@@ -137,8 +132,6 @@ export default function Match() {
   const reset = () => {
     setPlayerCards([]);
     setPlayerTotal(0);
-    setLose(false);
-    setBlackjack(false);
     setDisabled(false);
     setPlayerAceCount(0);
     setCrupierAceCount(0);
@@ -172,11 +165,9 @@ export default function Match() {
       } else if (_playerTotal > _crupierTotal) {
         setMessage("Ganaste 4");
       } else if (_playerTotal < _crupierTotal) {
-        setLose(true);
         setMessage("Pierdes 1");
       }
     } else if (_playerTotal > 21) {
-      setLose(true);
       setMessage("Pierdes 2");
     }
   };
