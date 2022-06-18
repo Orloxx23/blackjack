@@ -12,6 +12,8 @@ export default function Match() {
   const [coins, setCoins] = React.useState(0);
 
   // Match data
+  const [bet, setBet] = React.useState(0);
+
   const [playerCards, setPlayerCards] = React.useState([]);
   const [playerTotal, setPlayerTotal] = React.useState(0);
   const [playerAceCount, setPlayerAceCount] = React.useState(0);
@@ -23,6 +25,7 @@ export default function Match() {
   // System
   const [disabled, setDisabled] = React.useState(false);
   const [message, setMessage] = React.useState("");
+  const [finished, setFinished] = React.useState(false);
 
   const cargarCoins = () => {
     setCoins(500);
@@ -132,12 +135,16 @@ export default function Match() {
   const reset = () => {
     setPlayerCards([]);
     setPlayerTotal(0);
-    setDisabled(false);
     setPlayerAceCount(0);
+
+    setCrupierCards([]);
+    setCrupierTotal(0);
     setCrupierAceCount(0);
+
+    setFinished(false);
+    setDisabled(false);
     setMessage("");
 
-    barajarCartas();
   };
 
   const plantarse = (_playerTotal) => {
@@ -151,26 +158,54 @@ export default function Match() {
   const resultado = (_playerTotal, _crupierTotal) => {
     if (_playerTotal <= 21) {
       if (_playerTotal === 21) {
+        setCoins(coins + (bet*2))
         setMessage("Ganaste 1");
+
       } else if (_crupierTotal > 21) {
+        setCoins(coins + (bet*2))
         setMessage("Ganaste 2");
+
       } else if (_playerTotal === _crupierTotal) {
         if (_playerTotal === 21) {
           if (playerCards.length < crupierCards.length) {
+            setCoins(coins + (bet*2))
             setMessage("Ganaste 3");
+
           }
         } else {
+          const _coins = ((coins*1) + (bet*1));
+          setCoins(_coins)
           setMessage("Empate");
+
         }
       } else if (_playerTotal > _crupierTotal) {
+        setCoins(coins + (bet*2))
         setMessage("Ganaste 4");
+
       } else if (_playerTotal < _crupierTotal) {
         setMessage("Pierdes 1");
       }
     } else if (_playerTotal > 21) {
       setMessage("Pierdes 2");
     }
+    setFinished(true);
   };
+
+  const empezar = (e) => {
+    e.preventDefault();
+    if(bet < 1){
+      alert("debes apostar algo")
+    } else if(bet > coins){
+      alert("dinero insuficiente")
+    } else {
+      setCoins(coins - bet);
+      barajarCartas();
+    }
+  }
+
+  const onBetChange = (e) =>{
+    setBet(e.target.value);
+  }
 
   React.useEffect(() => {
     setCards(cardsImg);
@@ -179,6 +214,7 @@ export default function Match() {
 
   return (
     <Container style={{ paddingTop: "100px" }}>
+      {`Coins: ${coins}`}
       {crupierCards.length > 0 ? (
         <div>
           {`Crupier Total: ${crupierTotal}`}
@@ -239,13 +275,21 @@ export default function Match() {
           <button disabled={disabled} onClick={() => plantarse(playerTotal)}>
             Plantarse
           </button>
-          <button onClick={reset}>Nuevo juego</button>
+          {/* <button onClick={reset}>Nuevo juego</button> */}
+          {finished ? (
+            <button onClick={reset}>Nuevo juego</button>
+          ) : (
+            ""
+          )}
           {message}
         </div>
       ) : (
         <div>
           <p>Esperando inicio</p>
-          <button onClick={barajarCartas}>Empezar</button>
+          <form onSubmit={(e) => empezar(e)}>
+          <input type="number" onChange={(e) => onBetChange(e)} required/>
+          <button type="submit">Empezar</button>
+          </form>
         </div>
       )}
     </Container>
