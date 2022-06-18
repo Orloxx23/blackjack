@@ -23,9 +23,6 @@ export default function Match() {
   const [blackjack, setBlackjack] = React.useState(false);
   const [lose, setLose] = React.useState(false);
 
-  const [crupierBlackjack, setCrupierBlackjack] = React.useState(false);
-  const [crupierLose, setCrupierLose] = React.useState(false);
-
   // System
   const [disabled, setDisabled] = React.useState(false);
   const [message, setMessage] = React.useState("");
@@ -77,7 +74,7 @@ export default function Match() {
     setCrupierTotal(_total);
     setCrupierCards(newCards);
 
-    isBlackjack(_total);
+    //isBlackjack(_total);
   };
 
   const pedir = () => {
@@ -101,7 +98,7 @@ export default function Match() {
     isBlackjack(_total);
   };
 
-  const crupierPedir = () => {
+  const crupierPedir = (_playerTotal) => {
     var _total = crupierTotal;
     while (_total < 17) {
       var randomNum = Math.floor(Math.random() * (52 + 0 - 0 + 0));
@@ -121,7 +118,7 @@ export default function Match() {
       crupierCards.push(randomCard);
     }
 
-    resultado(_total);
+    resultado(_playerTotal, _total);
   };
 
   const isBlackjack = (total) => {
@@ -131,6 +128,7 @@ export default function Match() {
     }
 
     if (total === 21) {
+      setBlackjack(true);
       plantarse(total);
       return;
     }
@@ -149,37 +147,35 @@ export default function Match() {
     barajarCartas();
   };
 
-  const plantarse = () => {
+  const plantarse = (_playerTotal) => {
     setDisabled(true);
     let newCards = crupierCards;
     newCards.pop();
     setCrupierCards(newCards);
-    crupierPedir();
+    crupierPedir(_playerTotal);
   };
 
-  const resultado = (_crupierTotal) => {
-    console.log(`Player: ${playerTotal} vs Dealer: ${crupierTotal}`);
-    if (playerTotal <= 21) {
-      if (playerTotal === 21) {
-        setBlackjack(true);
+  const resultado = (_playerTotal, _crupierTotal) => {
+    if (_playerTotal <= 21) {
+      if (_playerTotal === 21) {
         setMessage("Ganaste 1");
       } else if (_crupierTotal > 21) {
         setMessage("Ganaste 2");
-      } else if (playerTotal === _crupierTotal) {
-        if (playerTotal === 21) {
+      } else if (_playerTotal === _crupierTotal) {
+        if (_playerTotal === 21) {
           if (playerCards.length < crupierCards.length) {
             setMessage("Ganaste 3");
           }
         } else {
           setMessage("Empate");
         }
-      } else if (playerTotal > _crupierTotal) {
+      } else if (_playerTotal > _crupierTotal) {
         setMessage("Ganaste 4");
-      } else if (playerTotal < _crupierTotal) {
+      } else if (_playerTotal < _crupierTotal) {
         setLose(true);
         setMessage("Pierdes 1");
       }
-    } else if (playerTotal > 21) {
+    } else if (_playerTotal > 21) {
       setLose(true);
       setMessage("Pierdes 2");
     }
@@ -249,7 +245,7 @@ export default function Match() {
           <button disabled={disabled} onClick={pedir}>
             Pedir
           </button>
-          <button disabled={disabled} onClick={plantarse}>
+          <button disabled={disabled} onClick={() => plantarse(playerTotal)}>
             Plantarse
           </button>
           <button onClick={reset}>Nuevo juego</button>
