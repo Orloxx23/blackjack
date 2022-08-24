@@ -15,7 +15,7 @@ export default function Login() {
 
   const login = async (e) => {
     e.preventDefault();
-    await axios.post('http://localhost:4000/api/auth/login', {
+    await axios.post('https://bj-backend.vercel.app/api/auth/login', {
         email: email,
         password: password
     })
