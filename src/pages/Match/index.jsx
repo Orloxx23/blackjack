@@ -207,6 +207,11 @@ export default function Match() {
     setBet(e.target.value);
   }
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    window.location.reload();
+  }
+
   React.useEffect(() => {
     setCards(cardsImg);
     cargarCoins();
@@ -214,7 +219,13 @@ export default function Match() {
 
   return (
     <Container style={{ paddingTop: "100px" }}>
+      <button onClick={logout}>Log out</button><br />
       {`Coins: ${coins}`}
+      {playerCards.length > 0 ? (
+        <div></div>
+      ) : (
+        <button style={{ marginLeft: "50px" }} onClick={cargarCoins}>Buy coins</button>
+      )}
       {crupierCards.length > 0 ? (
         <div>
           {`Crupier Total: ${crupierTotal}`}
@@ -285,10 +296,10 @@ export default function Match() {
         </div>
       ) : (
         <div>
-          <p>Esperando inicio</p>
+          <p>Waiting bet</p>
           <form onSubmit={(e) => empezar(e)}>
           <input type="number" onChange={(e) => onBetChange(e)} required/>
-          <button type="submit">Empezar</button>
+          <button type="submit">Start</button>
           </form>
         </div>
       )}
